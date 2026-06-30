@@ -1,0 +1,1291 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🌬️ Kit Pembelajaran: Pencemaran Udara</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Baloo+2:wght@700;800&display=swap');
+
+:root{
+  --sky:#E8F4FD;--cloud:#fff;--grass:#C8F7C5;
+  --p1:#7C3AED;--p2:#A855F7;--p3:#DDD6FE;
+  --g1:#059669;--g2:#34D399;--g3:#D1FAE5;
+  --o1:#EA580C;--o2:#FB923C;--o3:#FED7AA;
+  --b1:#1D4ED8;--b2:#60A5FA;--b3:#DBEAFE;
+  --r1:#DC2626;--r2:#F87171;--r3:#FEE2E2;
+  --y1:#D97706;--y2:#FBBF24;--y3:#FEF3C7;
+  --pk1:#BE185D;--pk2:#F472B6;--pk3:#FCE7F3;
+  --text:#1E1B4B;--muted:#6B7280;
+  --card:#FFFFFF;--page:#F0F9FF;
+  --radius:18px;--shadow:0 6px 24px rgba(124,58,237,.13);
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden}
+body{
+  font-family:'Nunito',sans-serif;
+  background:var(--page);
+  color:var(--text);
+  font-size:22px;
+  line-height:1.55;
+}
+
+/* ─── SLIDE SYSTEM ─── */
+.slides{width:100%;height:100vh;overflow:hidden;position:relative}
+.slide{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;
+  overflow-y:auto;
+  opacity:0;pointer-events:none;
+  transition:opacity .35s ease,transform .35s ease;
+  transform:translateX(60px);
+  padding:0 0 80px;
+}
+.slide.active{opacity:1;pointer-events:all;transform:translateX(0)}
+.slide.out-left{transform:translateX(-60px);opacity:0}
+
+/* ─── SLIDE BACKGROUNDS ─── */
+.slide-cover{background:linear-gradient(145deg,#4F46E5 0%,#7C3AED 40%,#EC4899 100%)}
+.slide-faktor{background:linear-gradient(145deg,#FFF7ED,#FEF3C7)}
+.slide-kesan{background:linear-gradient(145deg,#FFF1F2,#FDE8F3)}
+.slide-penyelesaian{background:linear-gradient(145deg,#F0FDF4,#ECFDF5)}
+.slide-mindmap{background:linear-gradient(145deg,#EEF2FF,#F5F3FF)}
+.slide-cornell{background:linear-gradient(145deg,#FFFBEB,#FFF7ED)}
+.slide-hats{background:linear-gradient(145deg,#F5F3FF,#EDE9FE)}
+.slide-buih{background:linear-gradient(145deg,#FFF0F8,#FCE7F3)}
+.slide-quiz{background:linear-gradient(145deg,#F0F9FF,#E0F2FE)}
+
+/* ─── NAVBAR ─── */
+.topbar{
+  position:fixed;top:0;left:0;right:0;z-index:200;
+  background:rgba(255,255,255,.92);
+  backdrop-filter:blur(12px);
+  border-bottom:2px solid var(--p3);
+  padding:8px 16px;
+  display:flex;align-items:center;gap:8px;
+  flex-wrap:wrap;
+}
+.topbar-logo{font-family:'Baloo 2',cursive;font-size:18px;color:var(--p1);margin-right:8px;white-space:nowrap}
+.tab-btn{
+  border:2px solid transparent;border-radius:30px;
+  padding:5px 14px;font-size:13px;font-weight:700;
+  font-family:'Nunito',sans-serif;
+  cursor:pointer;background:none;
+  color:var(--muted);transition:all .2s;white-space:nowrap;
+}
+.tab-btn:hover{background:var(--p3);color:var(--p1)}
+.tab-btn.on{background:var(--p1);color:#fff;border-color:var(--p1)}
+
+/* ─── BOTTOMBAR ─── */
+.bottombar{
+  position:fixed;bottom:0;left:0;right:0;z-index:200;
+  background:rgba(255,255,255,.95);
+  backdrop-filter:blur(12px);
+  border-top:2px solid var(--p3);
+  padding:10px 24px;
+  display:flex;align-items:center;justify-content:space-between;
+  gap:12px;
+}
+.nav-arrow{
+  border:none;border-radius:50%;
+  width:44px;height:44px;font-size:20px;
+  cursor:pointer;font-weight:900;
+  transition:all .2s;display:flex;align-items:center;justify-content:center;
+}
+.nav-arrow:hover{transform:scale(1.1)}
+.btn-prev{background:var(--p3);color:var(--p1)}
+.btn-next{background:var(--p1);color:#fff}
+.slide-dots{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+.dot{
+  width:10px;height:10px;border-radius:50%;
+  background:var(--p3);cursor:pointer;transition:all .2s;
+}
+.dot.on{background:var(--p1);transform:scale(1.4)}
+.slide-counter{font-size:13px;font-weight:700;color:var(--muted);min-width:48px;text-align:center}
+
+/* ─── SLIDE INNER ─── */
+.slide-inner{padding:80px 32px 16px;max-width:960px;margin:0 auto;width:100%}
+.slide-title{
+  font-family:'Baloo 2',cursive;
+  font-size:clamp(26px,4vw,42px);
+  margin-bottom:6px;line-height:1.2;
+}
+.slide-sub{font-size:18px;color:var(--muted);margin-bottom:20px;font-weight:600}
+.cite{font-size:14px;color:var(--p2);font-style:italic;margin-top:6px}
+
+/* ─── CARDS / GRIDS ─── */
+.cards2{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin:16px 0}
+.cards3{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin:16px 0}
+.card{
+  background:var(--card);border-radius:var(--radius);
+  padding:20px;box-shadow:var(--shadow);
+  border:2.5px solid transparent;transition:transform .25s,box-shadow .25s;
+}
+.card:hover{transform:translateY(-4px);box-shadow:0 10px 32px rgba(124,58,237,.2)}
+
+/* ─── FLIP CARD ─── */
+.flip-wrap{perspective:900px;cursor:pointer}
+.flip-inner{
+  position:relative;transform-style:preserve-3d;
+  transition:transform .55s cubic-bezier(.4,0,.2,1);
+  border-radius:var(--radius);
+}
+.flip-wrap.flipped .flip-inner{transform:rotateY(180deg)}
+.flip-front,.flip-back{
+  backface-visibility:hidden;-webkit-backface-visibility:hidden;
+  border-radius:var(--radius);padding:22px;min-height:150px;
+  display:flex;flex-direction:column;justify-content:center;align-items:center;
+  text-align:center;
+}
+.flip-back{position:absolute;inset:0;transform:rotateY(180deg)}
+.flip-hint{font-size:13px;opacity:.6;margin-top:8px}
+
+/* ─── CLICK REVEAL ─── */
+.reveal-btn{
+  width:100%;border:2.5px solid;border-radius:14px;
+  padding:14px 18px;font-size:20px;font-weight:700;
+  font-family:'Nunito',sans-serif;
+  cursor:pointer;text-align:left;
+  display:flex;align-items:center;gap:10px;
+  transition:all .2s;margin-bottom:10px;
+  background:white;
+}
+.reveal-btn:hover{transform:translateX(4px)}
+.reveal-content{
+  display:none;padding:14px 18px;margin-bottom:10px;margin-top:-6px;
+  border-radius:0 0 14px 14px;font-size:19px;line-height:1.65;
+}
+.reveal-content.open{display:block;animation:fadeSlide .25s ease}
+@keyframes fadeSlide{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+.chevron{transition:transform .25s;display:inline-block;margin-left:auto;font-size:16px}
+.open-btn .chevron{transform:rotate(180deg)}
+
+/* ─── COVER SLIDE ─── */
+.cover-emoji{font-size:80px;text-align:center;animation:float 3s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+.cover-title{
+  font-family:'Baloo 2',cursive;
+  font-size:clamp(32px,6vw,60px);
+  color:#fff;text-align:center;
+  text-shadow:0 4px 20px rgba(0,0,0,.25);line-height:1.15;
+}
+.cover-sub{color:rgba(255,255,255,.85);text-align:center;font-size:20px;font-weight:700;margin-top:8px}
+.cover-badges{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:20px}
+.badge{
+  background:rgba(255,255,255,.2);border:2px solid rgba(255,255,255,.4);
+  border-radius:30px;padding:8px 20px;color:#fff;font-size:16px;font-weight:700;
+  backdrop-filter:blur(8px);
+}
+.cover-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:24px;max-width:580px;margin-left:auto;margin-right:auto}
+.cover-card{
+  background:rgba(255,255,255,.18);border:2px solid rgba(255,255,255,.3);
+  border-radius:16px;padding:16px 10px;text-align:center;color:#fff;
+  backdrop-filter:blur(8px);
+}
+.cover-card .emo{font-size:36px;display:block;margin-bottom:6px}
+.cover-card p{font-size:15px;font-weight:700}
+
+/* ─── FACT BOX ─── */
+.fact-box{
+  background:linear-gradient(135deg,var(--p1),var(--pk1));
+  color:#fff;border-radius:16px;padding:16px 20px;
+  margin:14px 0;display:flex;gap:12px;align-items:flex-start;
+  font-size:19px;
+}
+.fact-box .ico{font-size:28px;flex-shrink:0}
+
+/* ─── MIND MAP SVG SLIDE ─── */
+.mm-wrap{
+  position:relative;width:100%;
+  background:white;border-radius:20px;
+  box-shadow:var(--shadow);overflow:hidden;
+}
+.mm-wrap svg{display:block;width:100%;height:auto}
+
+/* ─── CORNELL ─── */
+.cornell-wrap{border:3px solid var(--y1);border-radius:18px;overflow:hidden;background:white}
+.cornell-head{
+  background:linear-gradient(135deg,var(--y1),var(--o1));
+  color:#fff;padding:14px 20px;
+  font-family:'Baloo 2',cursive;font-size:22px;
+}
+.cornell-body{display:grid;grid-template-columns:190px 1fr}
+.cornell-cue{background:#FFFBEB;border-right:3px dashed var(--y2);padding:14px}
+.cornell-notes{padding:14px;line-height:1.8;font-size:19px}
+.cue-chip{
+  background:var(--y1);color:#fff;border-radius:8px;
+  padding:5px 10px;font-size:15px;font-weight:700;
+  margin-bottom:8px;cursor:pointer;display:block;
+  transition:transform .15s;
+}
+.cue-chip:hover{transform:scale(1.04)}
+.cornell-sum{
+  background:#FFF7ED;border-top:3px dashed var(--y2);
+  padding:12px 18px;font-size:18px;color:#78350F;font-style:italic;
+}
+.hl{background:#FEF08A;border-radius:4px;padding:0 3px}
+.hlg{background:#BBF7D0;border-radius:4px;padding:0 3px}
+.hlp{background:#FBCFE8;border-radius:4px;padding:0 3px}
+@media(max-width:560px){
+  .cornell-body{grid-template-columns:1fr}
+  .cornell-cue{border-right:none;border-bottom:3px dashed var(--y2)}
+}
+
+/* ─── SIX HATS ─── */
+.hats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin:14px 0}
+.hat{
+  border-radius:18px;padding:18px 14px;text-align:center;cursor:pointer;
+  border:3px solid transparent;transition:all .25s;
+}
+.hat:hover,.hat.picked{transform:translateY(-6px) scale(1.04)}
+.hat.picked{border-color:var(--text);box-shadow:0 8px 28px rgba(0,0,0,.18)}
+.hat-emo{font-size:44px;display:block;margin-bottom:6px}
+.hat-name{font-family:'Baloo 2',cursive;font-size:18px;margin-bottom:4px}
+.hat-role{font-size:14px;font-weight:700;opacity:.7}
+.hat-reveal{
+  display:none;margin-top:16px;border-radius:16px;
+  padding:18px 20px;font-size:19px;line-height:1.7;
+  animation:fadeSlide .3s ease;
+}
+.hat-reveal.show{display:block}
+.hat-point{display:flex;gap:10px;margin-bottom:10px;align-items:flex-start}
+.hat-point .dot2{width:10px;height:10px;border-radius:50%;flex-shrink:0;margin-top:7px}
+
+/* ─── BUBBLE MAP ─── */
+.buih-svg-wrap{position:relative;margin:10px 0}
+.buih-svg-wrap svg{display:block;width:100%;height:auto}
+.buih-info{
+  display:none;border-radius:14px;padding:16px 18px;
+  font-size:19px;line-height:1.65;margin-top:10px;
+  animation:fadeSlide .25s ease;
+  border-left:5px solid;
+}
+.buih-info.show{display:block}
+
+/* ─── QUIZ ─── */
+.quiz-wrap{max-width:680px;margin:0 auto}
+.quiz-prog{
+  background:#E0E7FF;border-radius:12px;height:14px;
+  margin-bottom:18px;overflow:hidden;
+}
+.quiz-prog-fill{
+  height:100%;border-radius:12px;
+  background:linear-gradient(90deg,var(--p1),var(--pk1));
+  transition:width .5s ease;
+}
+.quiz-q{font-size:22px;font-weight:800;color:var(--p1);margin-bottom:18px;line-height:1.4}
+.quiz-opts{display:grid;gap:10px}
+.qopt{
+  border:2.5px solid #DDD6FE;border-radius:14px;
+  padding:13px 18px;font-size:20px;font-weight:700;
+  font-family:'Nunito',sans-serif;cursor:pointer;
+  background:white;text-align:left;color:var(--text);
+  transition:all .2s;display:flex;align-items:center;gap:10px;
+}
+.qopt:hover:not(:disabled){background:#F3E8FF;border-color:var(--p1);transform:translateX(4px)}
+.qopt.correct{background:#D1FAE5;border-color:#059669;color:#065F46}
+.qopt.wrong{background:#FEE2E2;border-color:#DC2626;color:#7F1D1D}
+.qopt:disabled{cursor:default}
+.q-label{
+  width:32px;height:32px;border-radius:50%;
+  background:var(--p3);color:var(--p1);font-size:15px;font-weight:900;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.correct .q-label{background:#059669;color:#fff}
+.wrong .q-label{background:#DC2626;color:#fff}
+.q-fb{
+  display:none;border-radius:14px;padding:14px 18px;
+  font-size:19px;font-weight:600;margin-top:12px;
+  animation:bounceIn .35s ease;
+}
+.q-fb.show{display:block}
+.q-fb.ok{background:#D1FAE5;color:#065F46}
+.q-fb.no{background:#FEE2E2;color:#7F1D1D}
+@keyframes bounceIn{0%{transform:scale(.85);opacity:0}70%{transform:scale(1.04)}100%{transform:scale(1);opacity:1}}
+.q-next{
+  margin-top:14px;border:none;border-radius:14px;
+  padding:12px 28px;font-size:20px;font-weight:800;
+  font-family:'Nunito',sans-serif;
+  background:linear-gradient(135deg,var(--p1),var(--pk1));
+  color:#fff;cursor:pointer;display:none;transition:transform .2s;
+}
+.q-next:hover{transform:scale(1.05)}
+.quiz-score{text-align:center;padding:20px;display:none}
+.score-num{
+  font-family:'Baloo 2',cursive;font-size:88px;
+  background:linear-gradient(135deg,var(--p1),var(--pk1));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.score-stars{font-size:48px;margin:10px 0}
+.score-msg{font-size:22px;font-weight:700;color:var(--muted);margin-bottom:20px}
+.q-restart{
+  border:none;border-radius:20px;padding:12px 32px;
+  font-size:22px;font-weight:800;font-family:'Nunito',sans-serif;
+  background:linear-gradient(135deg,var(--p1),var(--pk1));
+  color:#fff;cursor:pointer;transition:transform .2s;
+}
+.q-restart:hover{transform:scale(1.06)}
+.qstat-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.qstat{font-size:16px;font-weight:700;color:var(--muted)}
+
+/* ─── MOBILE ─── */
+@media(max-width:600px){
+  .slide-inner{padding:70px 16px 10px}
+  .slide-title{font-size:26px}
+  .topbar{padding:6px 10px;gap:5px}
+  .tab-btn{padding:4px 10px;font-size:12px}
+  body{font-size:18px}
+  .cover-grid{grid-template-columns:repeat(3,1fr)}
+  .cornell-body{grid-template-columns:1fr}
+}
+
+/* ─── MISC ─── */
+.tag{display:inline-block;border-radius:20px;padding:3px 12px;font-size:15px;font-weight:700;margin:3px}
+.divider{border:none;border-top:2px dashed;opacity:.3;margin:16px 0}
+.step{display:flex;gap:12px;margin-bottom:14px;align-items:flex-start}
+.step-num{
+  width:38px;height:38px;border-radius:50%;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Baloo 2',cursive;font-size:20px;color:#fff;margin-top:2px;
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════ TOPBAR ═══════════ -->
+<div class="topbar">
+  <span class="topbar-logo">🌬️ Pencemaran Udara</span>
+  <button class="tab-btn on" onclick="goTo(0,this)">🏠 Mula</button>
+  <button class="tab-btn" onclick="goTo(1,this)">🏭 Faktor</button>
+  <button class="tab-btn" onclick="goTo(2,this)">🤒 Kesan</button>
+  <button class="tab-btn" onclick="goTo(3,this)">💡 Penyelesaian</button>
+  <button class="tab-btn" onclick="goTo(4,this)">🧠 Peta Minda</button>
+  <button class="tab-btn" onclick="goTo(5,this)">📝 Cornell</button>
+  <button class="tab-btn" onclick="goTo(6,this)">🎩 6 Topi</button>
+  <button class="tab-btn" onclick="goTo(7,this)">🫧 Peta Buih</button>
+  <button class="tab-btn" onclick="goTo(8,this)">🎮 Kuiz</button>
+</div>
+
+<!-- ═══════════ SLIDES ═══════════ -->
+<div class="slides" id="slides">
+
+<!-- ══ SLIDE 0: COVER ══ -->
+<div class="slide slide-cover active" data-idx="0">
+  <div class="slide-inner" style="display:flex;flex-direction:column;align-items:center;padding-top:90px;min-height:100vh;justify-content:center">
+    <div class="cover-emoji">🌬️</div>
+    <div class="cover-title">Pencemaran Udara<br>di Sekolah Kita</div>
+    <div class="cover-sub">Kit Pembelajaran Interaktif · Tahun 4–6</div>
+    <div class="cover-badges">
+      <span class="badge">📚 3 Kajian Ilmiah</span>
+      <span class="badge">🎮 Kuiz Interaktif</span>
+      <span class="badge">🎨 5 Alat Pemikiran</span>
+    </div>
+    <div class="cover-grid">
+      <div class="cover-card"><span class="emo">🏭</span><p>Faktor Pencemaran</p></div>
+      <div class="cover-card"><span class="emo">🤒</span><p>Kesan Kesihatan</p></div>
+      <div class="cover-card"><span class="emo">🌿</span><p>Cara Penyelesaian</p></div>
+    </div>
+    <div style="margin-top:28px;color:rgba(255,255,255,.7);font-size:17px;font-weight:700;animation:float 2s ease-in-out infinite">
+      Tekan ➡️ untuk bermula!
+    </div>
+  </div>
+</div>
+
+<!-- ══ SLIDE 1: FAKTOR ══ -->
+<div class="slide slide-faktor" data-idx="1">
+  <div class="slide-inner">
+    <div class="slide-title" style="color:var(--o1)">🏭 Faktor Pencemaran Udara</div>
+    <div class="slide-sub">Klik setiap kad untuk baca penerangan lengkap!</div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin-top:8px">
+
+      <!-- FLIP CARD 1 -->
+      <div class="flip-wrap" onclick="this.classList.toggle('flipped')">
+        <div class="flip-inner" style="height:180px">
+          <div class="flip-front" style="background:linear-gradient(135deg,#FEF3C7,#FDE68A);border:3px solid var(--y1)">
+            <span style="font-size:48px">🚗</span>
+            <strong style="color:var(--y1);font-size:20px;margin-top:8px">Kenderaan Bermotor</strong>
+            <span class="flip-hint">👆 Klik untuk buka!</span>
+          </div>
+          <div class="flip-back" style="background:var(--y1);color:#fff;text-align:left;font-size:18px">
+            Asap ekzos kenderaan mengeluarkan <strong>karbon monoksida (CO)</strong> dan <strong>nitrogen dioksida (NO₂)</strong>. Padang sekolah berhampiran jalan raya mencatatkan tahap PM10 tertinggi — sehingga <strong>50 μg/m³</strong>!
+            <div style="font-size:13px;margin-top:8px;opacity:.8">(Hamid @ Hussain, 2021)</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FLIP CARD 2 -->
+      <div class="flip-wrap" onclick="this.classList.toggle('flipped')">
+        <div class="flip-inner" style="height:180px">
+          <div class="flip-front" style="background:linear-gradient(135deg,#FED7AA,#FDBA74);border:3px solid var(--o1)">
+            <span style="font-size:48px">🔥</span>
+            <strong style="color:var(--o1);font-size:20px;margin-top:8px">Pembakaran Terbuka</strong>
+            <span class="flip-hint">👆 Klik untuk buka!</span>
+          </div>
+          <div class="flip-back" style="background:var(--o1);color:#fff;text-align:left;font-size:18px">
+            Punca <strong>UTAMA</strong> pencemaran udara di Malaysia. Majoriti daripada 207 responden bersetuju pembakaran terbuka — termasuk pembakaran ladang dan sampah — adalah ancaman terbesar.
+            <div style="font-size:13px;margin-top:8px;opacity:.8">(Puteh, Nordin, Amri &amp; Noor, 2024)</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FLIP CARD 3 -->
+      <div class="flip-wrap" onclick="this.classList.toggle('flipped')">
+        <div class="flip-inner" style="height:180px">
+          <div class="flip-front" style="background:linear-gradient(135deg,#DDD6FE,#C4B5FD);border:3px solid var(--p1)">
+            <span style="font-size:48px">🏗️</span>
+            <strong style="color:var(--p1);font-size:20px;margin-top:8px">Pelepasan Industri</strong>
+            <span class="flip-hint">👆 Klik untuk buka!</span>
+          </div>
+          <div class="flip-back" style="background:var(--p1);color:#fff;text-align:left;font-size:18px">
+            Kilang-kilang mengeluarkan <strong>sulfur dioksida (SO₂)</strong> dan bahan kimia berbahaya. Sulfur dioksida yang dipancarkan dari pembakaran bahan api fosil adalah salah satu punca utama pencemaran udara.
+            <div style="font-size:13px;margin-top:8px;opacity:.8">(Puteh et al., 2024)</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FLIP CARD 4 -->
+      <div class="flip-wrap" onclick="this.classList.toggle('flipped')">
+        <div class="flip-inner" style="height:180px">
+          <div class="flip-front" style="background:linear-gradient(135deg,#D1FAE5,#6EE7B7);border:3px solid var(--g1)">
+            <span style="font-size:48px">🌾</span>
+            <strong style="color:var(--g1);font-size:20px;margin-top:8px">Pertanian</strong>
+            <span class="flip-hint">👆 Klik untuk buka!</span>
+          </div>
+          <div class="flip-back" style="background:var(--g1);color:#fff;text-align:left;font-size:18px">
+            Baja dan racun serangga menghasilkan <strong>ammonia</strong> — salah satu gas paling berbahaya di atmosfera. Petani juga membakar ladang lama untuk menyediakan tanah baharu.
+            <div style="font-size:13px;margin-top:8px;opacity:.8">(Puteh et al., 2024)</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FLIP CARD 5 -->
+      <div class="flip-wrap" onclick="this.classList.toggle('flipped')">
+        <div class="flip-inner" style="height:180px">
+          <div class="flip-front" style="background:linear-gradient(135deg,#FCE7F3,#FBCFE8);border:3px solid var(--pk1)">
+            <span style="font-size:48px">🚬</span>
+            <strong style="color:var(--pk1);font-size:20px;margin-top:8px">Asap Rokok &amp; Vape</strong>
+            <span class="flip-hint">👆 Klik untuk buka!</span>
+          </div>
+          <div class="flip-back" style="background:var(--pk1);color:#fff;text-align:left;font-size:18px">
+            Produk pembersihan, bekalan lukisan, asap rokok dan vape mengeluarkan <strong>bahan kimia toksik</strong> yang mencemarkan udara dalam dan luar bangunan sekolah.
+            <div style="font-size:13px;margin-top:8px;opacity:.8">(Puteh et al., 2024)</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FLIP CARD 6 -->
+      <div class="flip-wrap" onclick="this.classList.toggle('flipped')">
+        <div class="flip-inner" style="height:180px">
+          <div class="flip-front" style="background:linear-gradient(135deg,#DBEAFE,#BFDBFE);border:3px solid var(--b1)">
+            <span style="font-size:48px">🧪</span>
+            <strong style="color:var(--b1);font-size:20px;margin-top:8px">Bahan Kimia Sekolah</strong>
+            <span class="flip-hint">👆 Klik untuk buka!</span>
+          </div>
+          <div class="flip-back" style="background:var(--b1);color:#fff;text-align:left;font-size:18px">
+            66 punca pencemaran udara dalaman dikenal pasti oleh WHO — termasuk <strong>kulat toksik</strong>, <strong>racun perosak</strong>, bahan kimia dari mesin fotostat, cat, dan perabot bilik darjah.
+            <div style="font-size:13px;margin-top:8px;opacity:.8">(Hamid @ Hussain, 2021)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="fact-box" style="margin-top:18px">
+      <span class="ico">💡</span>
+      <div><strong>Tahukah kamu?</strong> PM10 (partikel ternafas) di kawasan bandar adalah <strong>3 kali lebih tinggi</strong> daripada luar bandar. PM10 bermaksud partikel bersaiz ≤10 mikrometer yang boleh masuk terus ke dalam paru-paru! <span class="cite">(Hamid @ Hussain, 2021)</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SLIDE 2: KESAN ══ -->
+<div class="slide slide-kesan" data-idx="2">
+  <div class="slide-inner">
+    <div class="slide-title" style="color:var(--r1)">🤒 Kesan Pencemaran Udara</div>
+    <div class="slide-sub">Klik ▼ setiap kategori untuk baca kesan lengkap!</div>
+
+    <!-- REVEAL 1 -->
+    <button class="reveal-btn" style="border-color:var(--r1);color:var(--r1)" onclick="toggleReveal(this)">
+      <span style="font-size:26px">😮‍💨</span> Kesan kepada Sistem Pernafasan
+      <span class="chevron">▼</span>
+    </button>
+    <div class="reveal-content" style="background:#FEF2F2;border:2.5px solid var(--r1);font-size:19px">
+      Pencemaran PM10 menyebabkan <span class="hl">asma, bronkitis, pneumonia</span> dan <span class="hl">emphysema</span>. Simptom lazim termasuk <strong>sesak nafas, batuk kronik, bersin, dan alahan hidung</strong>. Peningkatan kepekatan PM10 memberi impak signifikan kepada golongan berisiko termasuk pelajar yang sedia menghidap masalah pernafasan.
+      <div class="cite">📚 Hamid @ Hussain, 2021</div>
+    </div>
+
+    <!-- REVEAL 2 -->
+    <button class="reveal-btn" style="border-color:var(--pk1);color:var(--pk1)" onclick="toggleReveal(this)">
+      <span style="font-size:26px">🧠</span> Kesan kepada Otak &amp; Pembelajaran
+      <span class="chevron">▼</span>
+    </button>
+    <div class="reveal-content" style="background:var(--pk3);border:2.5px solid var(--pk1);font-size:19px">
+      Kualiti udara dalaman yang rendah <span class="hlp">meningkatkan kadar asma, alahan, dan penyakit pernafasan</span> serta memberi kesan kepada prestasi pelajaran yang melibatkan <strong>tumpuan, pengiraan, dan memori</strong>. Pelajar sukar belajar apabila udara sekolah tercemar!
+      <div class="cite">📚 WHO 2018, dalam Hamid @ Hussain, 2021</div>
+    </div>
+
+    <!-- REVEAL 3 -->
+    <button class="reveal-btn" style="border-color:var(--o1);color:var(--o1)" onclick="toggleReveal(this)">
+      <span style="font-size:26px">👁️</span> Kesan kepada Mata, Hidung &amp; Kepala
+      <span class="chevron">▼</span>
+    </button>
+    <div class="reveal-content" style="background:var(--o3);border:2.5px solid var(--o1);font-size:19px">
+      Simptom penyakit disebabkan pencemaran udara termasuk <span class="hl">keletihan, sesak nafas, batuk, bersin, alahan mata dan hidung, serta pening kepala</span>. Bahan pencemar yang tidak kelihatan seperti karbon monoksida (CO) boleh membunuh secara tidak sengaja melalui keracunan!
+      <div class="cite">📚 Puteh, Nordin, Amri &amp; Noor, 2024</div>
+    </div>
+
+    <!-- REVEAL 4 -->
+    <button class="reveal-btn" style="border-color:var(--b1);color:var(--b1)" onclick="toggleReveal(this)">
+      <span style="font-size:26px">🏫</span> Kesan kepada Sekolah &amp; Negara
+      <span class="chevron">▼</span>
+    </button>
+    <div class="reveal-content" style="background:var(--b3);border:2.5px solid var(--b1);font-size:19px">
+      Semasa episod jerebu 2015, <span class="hlg"><strong>7,645 buah sekolah terpaksa ditutup</strong></span> melibatkan <strong>4,080,971 pelajar</strong> di kebanyakan negeri, apabila IPU mencapai paras "sangat tidak sihat" (melebihi 200 μg/m³). Pada 2019, Malaysia berada di kedudukan ke-<strong>50</strong> dunia dalam pencemaran PM2.5 iaitu 19.36 µg/m³.
+      <div class="cite">📚 Hamid @ Hussain, 2021 · Puteh et al., 2024</div>
+    </div>
+
+    <!-- REVEAL 5 -->
+    <button class="reveal-btn" style="border-color:var(--g1);color:var(--g1)" onclick="toggleReveal(this)">
+      <span style="font-size:26px">🌍</span> Kesan kepada Alam Sekitar
+      <span class="chevron">▼</span>
+    </button>
+    <div class="reveal-content" style="background:var(--g3);border:2.5px solid var(--g1);font-size:19px">
+      Pencemaran udara boleh menyebabkan <strong>gangguan ekosistem</strong> — tumbuhan mati, hujan asid merosakkan tanah dan sumber air. Pencemaran jangka panjang dikaitkan dengan penyakit Parkinson, Alzheimer, dan <span class="hlg">gangguan sistem saraf pusat</span>. Ia juga mengancam kesihatan ekonomi negara.
+      <div class="cite">📚 Puteh et al., 2024</div>
+    </div>
+
+    <div class="fact-box" style="background:linear-gradient(135deg,var(--r1),var(--pk1));margin-top:16px">
+      <span class="ico">⚠️</span>
+      <div>Pencemaran udara bertanggungjawab atas <strong>15% kematian global</strong> pada tahun 2017 dan menyebabkan 275 juta orang kurang upaya pada 2019!
+      <div class="cite" style="color:rgba(255,255,255,.8)">📚 Puteh et al., 2024</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SLIDE 3: PENYELESAIAN ══ -->
+<div class="slide slide-penyelesaian" data-idx="3">
+  <div class="slide-inner">
+    <div class="slide-title" style="color:var(--g1)">💡 Cara Penyelesaian</div>
+    <div class="slide-sub">Apa yang BOLEH kita buat? Klik kad untuk ketahui lebih lanjut!</div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-top:12px">
+
+      <div class="card" style="border-color:var(--g1);border-width:3px">
+        <div style="font-size:36px;margin-bottom:8px">🌳</div>
+        <strong style="color:var(--g1);font-size:20px">Penghijauan Sekolah</strong>
+        <hr class="divider" style="border-color:var(--g1)">
+        <div style="font-size:19px;line-height:1.65">
+          Tanam lebih banyak <strong>pokok dan tumbuhan</strong> di sekolah. Program <em>Penghijauan Sekolah</em> di Malaysia terbukti meningkatkan kualiti udara dan menyokong pembangunan lestari melalui penglibatan warga sekolah secara aktif.
+        </div>
+        <div class="cite" style="margin-top:8px">📚 Dato1 &amp; Mahat, 2026</div>
+      </div>
+
+      <div class="card" style="border-color:var(--b1);border-width:3px">
+        <div style="font-size:36px;margin-bottom:8px">🚫</div>
+        <strong style="color:var(--b1);font-size:20px">Kawal Pembakaran Terbuka</strong>
+        <hr class="divider" style="border-color:var(--b1)">
+        <div style="font-size:19px;line-height:1.65">
+          Kerajaan dan sekolah perlu <strong>menguat kuasa larangan pembakaran terbuka</strong>. Guna kaedah pelupusan sampah yang betul. Perlu strategi untuk tingkatkan kawalan tingkah laku masyarakat.
+        </div>
+        <div class="cite" style="margin-top:8px">📚 Puteh et al., 2024</div>
+      </div>
+
+      <div class="card" style="border-color:var(--p1);border-width:3px">
+        <div style="font-size:36px;margin-bottom:8px">😷</div>
+        <strong style="color:var(--p1);font-size:20px">Perlindungan Peribadi</strong>
+        <hr class="divider" style="border-color:var(--p1)">
+        <div style="font-size:19px;line-height:1.65">
+          Pakai <strong>pelitup muka</strong> semasa jerebu atau IPU melebihi 100. Pantau Indeks Pencemaran Udara (IPU) setiap hari. Berada di dalam bangunan ketika IPU &gt;200 ("sangat tidak sihat").
+        </div>
+        <div class="cite" style="margin-top:8px">📚 Hamid @ Hussain, 2021</div>
+      </div>
+
+      <div class="card" style="border-color:var(--y1);border-width:3px">
+        <div style="font-size:36px;margin-bottom:8px">♻️</div>
+        <strong style="color:var(--y1);font-size:20px">Amalkan 3R</strong>
+        <hr class="divider" style="border-color:var(--y1)">
+        <div style="font-size:19px;line-height:1.65">
+          <strong>Kurangkan (Reduce)</strong> penggunaan bahan berbahaya, <strong>Guna semula (Reuse)</strong> barangan, dan <strong>Kitar semula (Recycle)</strong> untuk mengurangkan keperluan pembakaran sampah.
+        </div>
+        <div class="cite" style="margin-top:8px">📚 Dato1 &amp; Mahat, 2026</div>
+      </div>
+
+      <div class="card" style="border-color:var(--o1);border-width:3px">
+        <div style="font-size:36px;margin-bottom:8px">🚌</div>
+        <strong style="color:var(--o1);font-size:20px">Kurangkan Penggunaan Kereta</strong>
+        <hr class="divider" style="border-color:var(--o1)">
+        <div style="font-size:19px;line-height:1.65">
+          Guna <strong>pengangkutan awam</strong>, basikal, atau jalan kaki. Setiap kenderaan yang kurang di jalan raya bermaksud <strong>lebih sedikit CO dan NO₂</strong> di udara yang kita sedut.
+        </div>
+        <div class="cite" style="margin-top:8px">📚 Puteh et al., 2024</div>
+      </div>
+
+      <div class="card" style="border-color:var(--pk1);border-width:3px">
+        <div style="font-size:36px;margin-bottom:8px">📢</div>
+        <strong style="color:var(--pk1);font-size:20px">Sebarkan Kesedaran</strong>
+        <hr class="divider" style="border-color:var(--pk1)">
+        <div style="font-size:19px;line-height:1.65">
+          Beritahu keluarga dan rakan-rakan tentang bahaya pencemaran udara. Perlu <strong>tindakan menyebarkan kesedaran kepada seluruh penduduk</strong>, terutama berkaitan risiko kesihatan pencemaran udara.
+        </div>
+        <div class="cite" style="margin-top:8px">📚 Puteh et al., 2024</div>
+      </div>
+
+    </div>
+
+    <div class="fact-box" style="margin-top:16px">
+      <span class="ico">🌟</span>
+      <div>Pengetahuan dan amalan hijau dalam kalangan murid sekolah rendah Malaysia boleh ditingkatkan melalui program alam sekitar yang melibatkan komuniti sekolah secara menyeluruh! <span class="cite">(Dato1 &amp; Mahat, 2026)</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SLIDE 4: PETA MINDA ══ -->
+<div class="slide slide-mindmap" data-idx="4">
+  <div class="slide-inner">
+    <div class="slide-title" style="color:var(--p1)">🧠 Peta Minda — Pencemaran Udara</div>
+    <div class="slide-sub">Klik setiap cabang untuk baca butiran!</div>
+
+    <div class="mm-wrap">
+      <svg viewBox="0 0 900 520" xmlns="http://www.w3.org/2000/svg" style="cursor:pointer">
+        <defs>
+          <filter id="shadow"><feDropShadow dx="0" dy="3" stdDeviation="5" flood-opacity=".18"/></filter>
+        </defs>
+
+        <!-- CONNECTING LINES -->
+        <line x1="450" y1="260" x2="180" y2="130" stroke="#7C3AED" stroke-width="4" stroke-dasharray="8,4" opacity=".5"/>
+        <line x1="450" y1="260" x2="720" y2="130" stroke="#DC2626" stroke-width="4" stroke-dasharray="8,4" opacity=".5"/>
+        <line x1="450" y1="260" x2="180" y2="390" stroke="#059669" stroke-width="4" stroke-dasharray="8,4" opacity=".5"/>
+        <line x1="450" y1="260" x2="720" y2="390" stroke="#D97706" stroke-width="4" stroke-dasharray="8,4" opacity=".5"/>
+
+        <!-- Sub-lines FAKTOR -->
+        <line x1="180" y1="130" x2="60" y2="60" stroke="#7C3AED" stroke-width="2.5" opacity=".4"/>
+        <line x1="180" y1="130" x2="60" y2="130" stroke="#7C3AED" stroke-width="2.5" opacity=".4"/>
+        <line x1="180" y1="130" x2="60" y2="200" stroke="#7C3AED" stroke-width="2.5" opacity=".4"/>
+        <!-- Sub-lines KESAN -->
+        <line x1="720" y1="130" x2="840" y2="60" stroke="#DC2626" stroke-width="2.5" opacity=".4"/>
+        <line x1="720" y1="130" x2="840" y2="130" stroke="#DC2626" stroke-width="2.5" opacity=".4"/>
+        <line x1="720" y1="130" x2="840" y2="200" stroke="#DC2626" stroke-width="2.5" opacity=".4"/>
+        <!-- Sub-lines PENYELESAIAN -->
+        <line x1="180" y1="390" x2="60" y2="320" stroke="#059669" stroke-width="2.5" opacity=".4"/>
+        <line x1="180" y1="390" x2="60" y2="390" stroke="#059669" stroke-width="2.5" opacity=".4"/>
+        <line x1="180" y1="390" x2="60" y2="460" stroke="#059669" stroke-width="2.5" opacity=".4"/>
+        <!-- Sub-lines PM10 -->
+        <line x1="720" y1="390" x2="840" y2="320" stroke="#D97706" stroke-width="2.5" opacity=".4"/>
+        <line x1="720" y1="390" x2="840" y2="390" stroke="#D97706" stroke-width="2.5" opacity=".4"/>
+        <line x1="720" y1="390" x2="840" y2="460" stroke="#D97706" stroke-width="2.5" opacity=".4"/>
+
+        <!-- CENTER -->
+        <circle cx="450" cy="260" r="76" fill="#7C3AED" filter="url(#shadow)"/>
+        <circle cx="450" cy="260" r="66" fill="#A855F7"/>
+        <text x="450" y="248" text-anchor="middle" fill="white" font-family="Baloo 2,sans-serif" font-size="17" font-weight="bold">🌬️ Pencemaran</text>
+        <text x="450" y="268" text-anchor="middle" fill="white" font-family="Baloo 2,sans-serif" font-size="17" font-weight="bold">Udara</text>
+        <text x="450" y="288" text-anchor="middle" fill="rgba(255,255,255,.8)" font-family="Nunito,sans-serif" font-size="13">di Sekolah</text>
+
+        <!-- BRANCH: FAKTOR -->
+        <rect x="110" y="100" width="140" height="60" rx="14" fill="#7C3AED" filter="url(#shadow)" onclick="mmDetail('faktor')" style="cursor:pointer"/>
+        <text x="180" y="126" text-anchor="middle" fill="white" font-family="Baloo 2,sans-serif" font-size="16" font-weight="bold">🏭 Faktor</text>
+        <text x="180" y="148" text-anchor="middle" fill="rgba(255,255,255,.85)" font-family="Nunito,sans-serif" font-size="13">Pencemaran</text>
+
+        <!-- BRANCH: KESAN -->
+        <rect x="650" y="100" width="140" height="60" rx="14" fill="#DC2626" filter="url(#shadow)" onclick="mmDetail('kesan')" style="cursor:pointer"/>
+        <text x="720" y="126" text-anchor="middle" fill="white" font-family="Baloo 2,sans-serif" font-size="16" font-weight="bold">🤒 Kesan</text>
+        <text x="720" y="148" text-anchor="middle" fill="rgba(255,255,255,.85)" font-family="Nunito,sans-serif" font-size="13">Kesihatan</text>
+
+        <!-- BRANCH: PENYELESAIAN -->
+        <rect x="110" y="360" width="140" height="60" rx="14" fill="#059669" filter="url(#shadow)" onclick="mmDetail('penyelesaian')" style="cursor:pointer"/>
+        <text x="180" y="386" text-anchor="middle" fill="white" font-family="Baloo 2,sans-serif" font-size="16" font-weight="bold">💡 Cara</text>
+        <text x="180" y="408" text-anchor="middle" fill="rgba(255,255,255,.85)" font-family="Nunito,sans-serif" font-size="13">Penyelesaian</text>
+
+        <!-- BRANCH: PM10 -->
+        <rect x="650" y="360" width="140" height="60" rx="14" fill="#D97706" filter="url(#shadow)" onclick="mmDetail('pm10')" style="cursor:pointer"/>
+        <text x="720" y="386" text-anchor="middle" fill="white" font-family="Baloo 2,sans-serif" font-size="16" font-weight="bold">📊 PM10</text>
+        <text x="720" y="408" text-anchor="middle" fill="rgba(255,255,255,.85)" font-family="Nunito,sans-serif" font-size="13">Data Penting</text>
+
+        <!-- SUB NODES FAKTOR -->
+        <rect x="4" y="38" width="110" height="38" rx="10" fill="#A855F7" opacity=".9"/>
+        <text x="59" y="62" text-anchor="middle" fill="white" font-family="Nunito,sans-serif" font-size="13" font-weight="700">🚗 Kenderaan</text>
+        <rect x="4" y="108" width="110" height="38" rx="10" fill="#A855F7" opacity=".9"/>
+        <text x="59" y="132" text-anchor="middle" fill="white" font-family="Nunito,sans-serif" font-size="13" font-weight="700">🔥 Pembakaran</text>
+        <rect x="4" y="178" width="110" height="38" rx="10" fill="#A855F7" opacity=".9"/>
+        <text x="59" y="202" text-anchor="middle" fill="white" font-family="Nunito,sans-serif" font-size="13" font-weight="700">🏗️ Industri</text>
+
+        <!-- SUB NODES KESAN -->
+        <rect x="785" y="38" width="112" height="38" rx="10" fill="#F87171" opacity=".9"/>
+        <text x="841" y="62" text-anchor="middle" fill="white" font-family="Nunito,sans-serif" font-size="13" font-weight="700">😮‍💨 Pernafasan</text>
+        <rect x="785" y="108" width="112" height="38" rx="10" fill="#F87171" opacity=".9"/>
+        <text x="841" y="132" text-anchor="middle" fill="white" font-family="Nunito,sans-serif" font-size="13" font-weight="700">🧠 Otak &amp; Belajar</text>
+        <rect x="785" y="178" width="112" height="38" rx="10" fill="#F87171" opacity=".9"/>
+        <text x="841" y="202" text-anchor="middle" fill="white" font-family="Nunito,sans-serif" font-size="13" font-weight="700">🏫 7,645 Sekolah</text>
+
+        <!-- SUB NODES PENYELESAIAN -->
+        <rect x="4" y="298" width="110" height="38" rx="10" fill="#34D399" opacity=".9"/>
+        <text x="59" y="322" text-anchor="middle" fill="white" font-family="Nunito,sans-serif" font-size="13" font-weight="700">🌳 Penghijauan</text>
+        <rect x="4" y="368" width="110" height="38" rx="10" fill="#34D399" opacity=".9"/>
+        <text x="59" y="392" text-anchor="middle" fill="white" font-family="Nunito,sans-serif" font-size="13" font-weight="700">♻️ 3R</text>
+        <rect x="4" y="438" width="110" height="38" rx="10" fill="#34D399" opacity=".9"/>
+        <text x="59" y="462" text-anchor="middle" fill="white" font-family="Nunito,sans-serif" font-size="13" font-weight="700">😷 Pelitup Muka</text>
+
+        <!-- SUB NODES PM10 -->
+        <rect x="785" y="298" width="112" height="38" rx="10" fill="#FBBF24" opacity=".9"/>
+        <text x="841" y="322" text-anchor="middle" fill="white" font-family="Nunito,sans-serif" font-size="13" font-weight="700">📍 ≤10 mikrometer</text>
+        <rect x="785" y="368" width="112" height="38" rx="10" fill="#FBBF24" opacity=".9"/>
+        <text x="841" y="392" text-anchor="middle" fill="white" font-family="Nunito,sans-serif" font-size="13" font-weight="700">📈 Bandar 3x</text>
+        <rect x="785" y="438" width="112" height="38" rx="10" fill="#FBBF24" opacity=".9"/>
+        <text x="841" y="462" text-anchor="middle" fill="white" font-family="Nunito,sans-serif" font-size="13" font-weight="700">⚡ IPU &gt;200</text>
+
+        <!-- CLICK HINT -->
+        <text x="450" y="498" text-anchor="middle" fill="#9CA3AF" font-family="Nunito,sans-serif" font-size="14">👆 Klik cabang warna untuk baca butiran</text>
+      </svg>
+    </div>
+
+    <!-- DETAIL PANELS -->
+    <div id="mm-faktor" style="display:none;background:var(--p3);border-left:5px solid var(--p1);border-radius:14px;padding:16px 18px;margin-top:12px;font-size:19px;animation:fadeSlide .25s ease">
+      <strong style="color:var(--p1)">🏭 Faktor Pencemaran:</strong> Kenderaan bermotor (CO, NO₂), Pembakaran terbuka (punca utama), Pelepasan industri (SO₂), Pertanian (ammonia), Asap rokok/vape, Bahan kimia dalam sekolah (VOC).
+      <div class="cite">📚 Hamid @ Hussain, 2021 · Puteh et al., 2024</div>
+    </div>
+    <div id="mm-kesan" style="display:none;background:var(--r3);border-left:5px solid var(--r1);border-radius:14px;padding:16px 18px;margin-top:12px;font-size:19px;animation:fadeSlide .25s ease">
+      <strong style="color:var(--r1)">🤒 Kesan Kesihatan:</strong> Asma, bronkitis, sesak nafas, batuk, alahan mata/hidung, pening kepala, ingatan merosot, kesukaran belajar. Semasa jerebu 2015 — 7,645 sekolah tutup, 4,080,971 pelajar terjejas!
+      <div class="cite">📚 Hamid @ Hussain, 2021</div>
+    </div>
+    <div id="mm-penyelesaian" style="display:none;background:var(--g3);border-left:5px solid var(--g1);border-radius:14px;padding:16px 18px;margin-top:12px;font-size:19px;animation:fadeSlide .25s ease">
+      <strong style="color:var(--g1)">💡 Penyelesaian:</strong> Penghijauan Sekolah (tanam pokok, taman hijau), Kawal pembakaran terbuka, Guna pengangkutan awam, Amalkan 3R, Pakai pelitup muka, Sebarkan kesedaran komuniti.
+      <div class="cite">📚 Dato1 &amp; Mahat, 2026 · Puteh et al., 2024</div>
+    </div>
+    <div id="mm-pm10" style="display:none;background:var(--y3);border-left:5px solid var(--y1);border-radius:14px;padding:16px 18px;margin-top:12px;font-size:19px;animation:fadeSlide .25s ease">
+      <strong style="color:var(--y1)">📊 Data PM10:</strong> PM10 = Partikel ≤10 mikrometer yang boleh masuk ke paru-paru. Bandar = 3x lebih tinggi daripada luar bandar. IPU &gt;200 μg/m³ = "Sangat Tidak Sihat". Malaysia ke-50 dunia (PM2.5 = 19.36 µg/m³ pada 2019).
+      <div class="cite">📚 Hamid @ Hussain, 2021 · Puteh et al., 2024</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SLIDE 5: CORNELL ══ -->
+<div class="slide slide-cornell" data-idx="5">
+  <div class="slide-inner">
+    <div class="slide-title" style="color:var(--y1)">📝 Nota Cornell</div>
+    <div class="slide-sub">Cara nota paling berkesan untuk pelajar! Klik kata kunci untuk highlight.</div>
+
+    <div class="cornell-wrap">
+      <div class="cornell-head">
+        📝 Nota Cornell: Pencemaran Udara di Sekolah Malaysia
+        <div style="font-size:16px;opacity:.85;font-family:Nunito,sans-serif;font-weight:600;margin-top:4px">Mata Pelajaran: Sains / Alam Sekitar &nbsp;·&nbsp; Sumber: 3 Kajian Ilmiah (2021–2026)</div>
+      </div>
+      <div class="cornell-body">
+        <!-- CUE -->
+        <div class="cornell-cue">
+          <div style="font-size:14px;font-weight:800;color:var(--y1);margin-bottom:10px;text-transform:uppercase;letter-spacing:.04em">🔑 Kata Kunci</div>
+          <span class="cue-chip" onclick="hlWord('pm10')">PM10</span>
+          <span class="cue-chip" onclick="hlWord('faktor')">Faktor Pencemaran</span>
+          <span class="cue-chip" onclick="hlWord('kesan')">Kesan Pernafasan</span>
+          <span class="cue-chip" onclick="hlWord('jerebu')">Jerebu 2015</span>
+          <span class="cue-chip" onclick="hlWord('bandar')">Bandar vs Luar Bandar</span>
+          <span class="cue-chip" onclick="hlWord('penyelesaian')">Penyelesaian</span>
+          <span class="cue-chip" onclick="hlWord('penghijauan')">Penghijauan Sekolah</span>
+          <span class="cue-chip" onclick="hlWord('ipu')">Indeks IPU</span>
+          <div style="font-size:13px;color:var(--muted);font-style:italic;margin-top:10px">Klik kata kunci untuk highlight dalam nota →</div>
+        </div>
+        <!-- NOTES -->
+        <div class="cornell-notes" id="cornellBody">
+          <div style="margin-bottom:8px">📌 <strong>Definisi:</strong> Pencemaran udara = kehadiran bahan cemar seperti <span id="hl-pm10" class="hl">karbon monoksida, SO₂, ozon, NO₂ dan PM10</span> yang memberi impak negatif kepada alam sekitar dan manusia. <span class="cite" style="font-size:15px">(Hamid @ Hussain, 2021)</span></div>
+          <div style="margin-bottom:8px">📌 Kualiti udara dalaman sekolah mempengaruhi <strong>tumpuan, pengiraan, dan memori</strong> pelajar. <span class="cite" style="font-size:15px">(WHO 2018)</span></div>
+          <hr class="divider" style="border-color:var(--y1)">
+          <div style="margin-bottom:6px"><strong style="color:var(--o1)">🏭 FAKTOR <span id="hl-faktor">PENCEMARAN</span>:</strong></div>
+          <div style="padding-left:16px;margin-bottom:4px">① <span id="hl-bandar">Kenderaan bermotor</span> → CO, NO₂, PM10 (padang sekolah berdekatan jalan raya = tertinggi: 50 μg/m³)</div>
+          <div style="padding-left:16px;margin-bottom:4px">② Pembakaran terbuka → punca UTAMA (kajian 207 responden) <span class="cite" style="font-size:15px">(Puteh et al., 2024)</span></div>
+          <div style="padding-left:16px;margin-bottom:4px">③ Industri → SO₂ | ④ Pertanian → ammonia | ⑤ Rokok/vape | ⑥ 66 punca VOC dalam sekolah</div>
+          <hr class="divider" style="border-color:var(--r1)">
+          <div style="margin-bottom:6px"><strong style="color:var(--r1)">🤒 <span id="hl-kesan">KESAN PERNAFASAN</span>:</strong></div>
+          <div style="padding-left:16px;margin-bottom:4px">• Asma, bronkitis, pneumonia, emphysema, sesak nafas, batuk, bersin</div>
+          <div style="padding-left:16px;margin-bottom:4px">• Alahan mata/hidung, pening kepala, keletihan, ingatan &amp; tumpuan merosot</div>
+          <div style="padding-left:16px;margin-bottom:4px">• <span id="hl-jerebu">Jerebu 2015</span>: 7,645 sekolah tutup, 4,080,971 pelajar terjejas <span class="cite" style="font-size:15px">(Hamid @ Hussain, 2021)</span></div>
+          <hr class="divider" style="border-color:var(--g1)">
+          <div style="margin-bottom:6px"><strong style="color:var(--g1)">💡 CARA <span id="hl-penyelesaian">PENYELESAIAN</span>:</strong></div>
+          <div style="padding-left:16px;margin-bottom:4px">• <span id="hl-penghijauan">Penghijauan Sekolah</span>: tanam pokok, taman hijau, amalan lestari <span class="cite" style="font-size:15px">(Dato1 &amp; Mahat, 2026)</span></div>
+          <div style="padding-left:16px;margin-bottom:4px">• Larang pembakaran terbuka | Guna pengangkutan awam | Amalkan 3R</div>
+          <div style="padding-left:16px;margin-bottom:4px">• Pakai pelitup muka ketika <span id="hl-ipu">IPU</span> &gt;100 | Berada di dalam ketika IPU &gt;200</div>
+        </div>
+      </div>
+      <div class="cornell-sum">
+        <strong>📝 Rumusan:</strong> Pencemaran udara di sekolah berpunca dari kenderaan, pembakaran terbuka, industri, pertanian, rokok, dan bahan kimia dalaman. Ia menjejaskan pernafasan, tumpuan, dan akademik pelajar. Penyelesaiannya termasuk penghijauan sekolah, kawalan kerajaan, dan kesedaran komuniti. Malaysia perlu bertindak segera!
+      </div>
+    </div>
+
+    <div class="fact-box" style="margin-top:16px">
+      <span class="ico">📖</span>
+      <div style="font-size:18px">Format Nota Cornell membantu kamu <strong>mengingat maklumat dengan lebih mudah</strong> — bahagian kiri untuk kata kunci, kanan untuk nota penuh, bawah untuk rumusan!</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SLIDE 6: SIX THINKING HATS ══ -->
+<div class="slide slide-hats" data-idx="6">
+  <div class="slide-inner">
+    <div class="slide-title" style="color:var(--p1)">🎩 Six Thinking Hats</div>
+    <div class="slide-sub">Klik topi untuk lihat perspektif berbeza tentang pencemaran udara!</div>
+
+    <div class="hats-grid">
+      <div class="hat" style="background:#F8FAFC;border-color:#94A3B8" onclick="pickHat('white',this)">
+        <span class="hat-emo">⚪</span>
+        <div class="hat-name" style="color:#475569">Topi Putih</div>
+        <div class="hat-role" style="color:#94A3B8">Fakta &amp; Data</div>
+      </div>
+      <div class="hat" style="background:#FEF9EC;border-color:var(--y1)" onclick="pickHat('yellow',this)">
+        <span class="hat-emo">🟡</span>
+        <div class="hat-name" style="color:var(--y1)">Topi Kuning</div>
+        <div class="hat-role" style="color:#A16207">Positif &amp; Manfaat</div>
+      </div>
+      <div class="hat" style="background:#FFF1F2;border-color:var(--r1)" onclick="pickHat('red',this)">
+        <span class="hat-emo">🔴</span>
+        <div class="hat-name" style="color:var(--r1)">Topi Merah</div>
+        <div class="hat-role" style="color:#9F1239">Emosi &amp; Perasaan</div>
+      </div>
+      <div class="hat" style="background:#F0FDF4;border-color:var(--g1)" onclick="pickHat('green',this)">
+        <span class="hat-emo">🟢</span>
+        <div class="hat-name" style="color:var(--g1)">Topi Hijau</div>
+        <div class="hat-role" style="color:#065F46">Kreativiti &amp; Idea</div>
+      </div>
+      <div class="hat" style="background:#EFF6FF;border-color:var(--b1)" onclick="pickHat('blue',this)">
+        <span class="hat-emo">🔵</span>
+        <div class="hat-name" style="color:var(--b1)">Topi Biru</div>
+        <div class="hat-role" style="color:#1E3A8A">Proses &amp; Rancangan</div>
+      </div>
+      <div class="hat" style="background:#1F2937;border-color:#374151" onclick="pickHat('black',this)">
+        <span class="hat-emo">⚫</span>
+        <div class="hat-name" style="color:#E5E7EB">Topi Hitam</div>
+        <div class="hat-role" style="color:#9CA3AF">Risiko &amp; Masalah</div>
+      </div>
+    </div>
+
+    <div id="hat-area" style="margin-top:14px"></div>
+  </div>
+</div>
+
+<!-- ══ SLIDE 7: PETA BUIH ══ -->
+<div class="slide slide-buih" data-idx="7">
+  <div class="slide-inner">
+    <div class="slide-title" style="color:var(--pk1)">🫧 Peta Buih — Pencemaran Udara</div>
+    <div class="slide-sub">Klik buih untuk ketahui maksudnya!</div>
+
+    <!-- BUIH 1 -->
+    <div class="card" style="border-color:var(--p1);border-width:3px;margin-bottom:14px">
+      <strong style="color:var(--p1);font-size:20px">🫧 Peta Buih 1 — Sifat Pencemaran Udara</strong>
+      <div class="buih-svg-wrap">
+        <svg viewBox="0 0 700 300" xmlns="http://www.w3.org/2000/svg">
+          <!-- Lines to center -->
+          <line x1="350" y1="150" x2="120" y2="75" stroke="#A855F7" stroke-width="2.5" stroke-dasharray="6,3" opacity=".5"/>
+          <line x1="350" y1="150" x2="580" y2="75" stroke="#A855F7" stroke-width="2.5" stroke-dasharray="6,3" opacity=".5"/>
+          <line x1="350" y1="150" x2="60" y2="150" stroke="#A855F7" stroke-width="2.5" stroke-dasharray="6,3" opacity=".5"/>
+          <line x1="350" y1="150" x2="640" y2="150" stroke="#A855F7" stroke-width="2.5" stroke-dasharray="6,3" opacity=".5"/>
+          <line x1="350" y1="150" x2="120" y2="225" stroke="#A855F7" stroke-width="2.5" stroke-dasharray="6,3" opacity=".5"/>
+          <line x1="350" y1="150" x2="580" y2="225" stroke="#A855F7" stroke-width="2.5" stroke-dasharray="6,3" opacity=".5"/>
+          <!-- CENTER -->
+          <circle cx="350" cy="150" r="58" fill="#7C3AED"/>
+          <text x="350" y="143" text-anchor="middle" fill="white" font-family="Baloo 2,sans-serif" font-size="14" font-weight="bold">🌬️ Pencemaran</text>
+          <text x="350" y="161" text-anchor="middle" fill="white" font-family="Baloo 2,sans-serif" font-size="14" font-weight="bold">Udara</text>
+          <!-- SURROUNDING BUBBLES -->
+          <circle cx="120" cy="75" r="42" fill="#F3E8FF" stroke="#7C3AED" stroke-width="2.5" onclick="buih1('berbahaya')" style="cursor:pointer"/>
+          <text x="120" y="70" text-anchor="middle" fill="#4C1D95" font-family="Nunito,sans-serif" font-size="12" font-weight="700" onclick="buih1('berbahaya')" style="cursor:pointer">☠️ Sangat</text>
+          <text x="120" y="84" text-anchor="middle" fill="#4C1D95" font-family="Nunito,sans-serif" font-size="12" font-weight="700" onclick="buih1('berbahaya')" style="cursor:pointer">Berbahaya</text>
+          <circle cx="580" cy="75" r="42" fill="#FEE2E2" stroke="#DC2626" stroke-width="2.5" onclick="buih1('invisible')" style="cursor:pointer"/>
+          <text x="580" y="70" text-anchor="middle" fill="#991B1B" font-family="Nunito,sans-serif" font-size="12" font-weight="700" onclick="buih1('invisible')" style="cursor:pointer">👻 Tidak</text>
+          <text x="580" y="84" text-anchor="middle" fill="#991B1B" font-family="Nunito,sans-serif" font-size="12" font-weight="700" onclick="buih1('invisible')" style="cursor:pointer">Kelihatan</text>
+          <circle cx="60" cy="150" r="42" fill="#FEF3C7" stroke="#D97706" stroke-width="2.5" onclick="buih1('merebak')" style="cursor:pointer"/>
+          <text x="60" y="145" text-anchor="middle" fill="#92400E" font-family="Nunito,sans-serif" font-size="12" font-weight="700" onclick="buih1('merebak')" style="cursor:pointer">💨 Merebak</text>
+          <text x="60" y="159" text-anchor="middle" fill="#92400E" font-family="Nunito,sans-serif" font-size="12" font-weight="700" onclick="buih1('merebak')" style="cursor:pointer">Jauh</text>
+          <circle cx="640" cy="150" r="42" fill="#DBEAFE" stroke="#1D4ED8" stroke-width="2.5" onclick="buih1('global')" style="cursor:pointer"/>
+          <text x="640" y="145" text-anchor="middle" fill="#1E3A8A" font-family="Nunito,sans-serif" font-size="12" font-weight="700" onclick="buih1('global')" style="cursor:pointer">🌍 Masalah</text>
+          <text x="640" y="159" text-anchor="middle" fill="#1E3A8A" font-family="Nunito,sans-serif" font-size="12" font-weight="700" onclick="buih1('global')" style="cursor:pointer">Global</text>
+          <circle cx="120" cy="225" r="42" fill="#D1FAE5" stroke="#059669" stroke-width="2.5" onclick="buih1('bolehkawal')" style="cursor:pointer"/>
+          <text x="120" y="220" text-anchor="middle" fill="#065F46" font-family="Nunito,sans-serif" font-size="12" font-weight="700" onclick="buih1('bolehkawal')" style="cursor:pointer">✅ Boleh</text>
+          <text x="120" y="234" text-anchor="middle" fill="#065F46" font-family="Nunito,sans-serif" font-size="12" font-weight="700" onclick="buih1('bolehkawal')" style="cursor:pointer">Dikawal</text>
+          <circle cx="580" cy="225" r="42" fill="#FCE7F3" stroke="#BE185D" stroke-width="2.5" onclick="buih1('berlapis')" style="cursor:pointer"/>
+          <text x="580" y="220" text-anchor="middle" fill="#9D174D" font-family="Nunito,sans-serif" font-size="12" font-weight="700" onclick="buih1('berlapis')" style="cursor:pointer">📊 Pelbagai</text>
+          <text x="580" y="234" text-anchor="middle" fill="#9D174D" font-family="Nunito,sans-serif" font-size="12" font-weight="700" onclick="buih1('berlapis')" style="cursor:pointer">Punca</text>
+          <text x="350" y="288" text-anchor="middle" fill="#9CA3AF" font-family="Nunito,sans-serif" font-size="13">👆 Klik buih untuk baca penerangan</text>
+        </svg>
+      </div>
+      <div id="bi1" class="buih-info" style="border-color:var(--p1);background:var(--p3)"></div>
+    </div>
+
+    <!-- BUIH 2 -->
+    <div class="card" style="border-color:var(--g1);border-width:3px">
+      <strong style="color:var(--g1);font-size:20px">🫧 Peta Buih 2 — Ciri Penyelesaian</strong>
+      <div class="buih-svg-wrap">
+        <svg viewBox="0 0 700 300" xmlns="http://www.w3.org/2000/svg">
+          <line x1="350" y1="150" x2="120" y2="75" stroke="#059669" stroke-width="2.5" stroke-dasharray="6,3" opacity=".5"/>
+          <line x1="350" y1="150" x2="580" y2="75" stroke="#059669" stroke-width="2.5" stroke-dasharray="6,3" opacity=".5"/>
+          <line x1="350" y1="150" x2="60" y2="150" stroke="#059669" stroke-width="2.5" stroke-dasharray="6,3" opacity=".5"/>
+          <line x1="350" y1="150" x2="640" y2="150" stroke="#059669" stroke-width="2.5" stroke-dasharray="6,3" opacity=".5"/>
+          <line x1="350" y1="150" x2="120" y2="225" stroke="#059669" stroke-width="2.5" stroke-dasharray="6,3" opacity=".5"/>
+          <line x1="350" y1="150" x2="580" y2="225" stroke="#059669" stroke-width="2.5" stroke-dasharray="6,3" opacity=".5"/>
+          <circle cx="350" cy="150" r="58" fill="#059669"/>
+          <text x="350" y="143" text-anchor="middle" fill="white" font-family="Baloo 2,sans-serif" font-size="14" font-weight="bold">💡 Cara</text>
+          <text x="350" y="161" text-anchor="middle" fill="white" font-family="Baloo 2,sans-serif" font-size="14" font-weight="bold">Penyelesaian</text>
+          <circle cx="120" cy="75" r="42" fill="#D1FAE5" stroke="#059669" stroke-width="2.5" onclick="buih2('lestari')" style="cursor:pointer"/>
+          <text x="120" y="70" text-anchor="middle" fill="#065F46" font-family="Nunito,sans-serif" font-size="12" font-weight="700" onclick="buih2('lestari')" style="cursor:pointer">🌿 Lestari</text>
+          <text x="120" y="84" text-anchor="middle" fill="#065F46" font-family="Nunito,sans-serif" font-size="12" font-weight="700" onclick="buih2('lestari')" style="cursor:pointer">&amp; Hijau</text>
+          <circle cx="580" cy="75" r="42" fill="#F3E8FF" stroke="#7C3AED" stroke-width="2.5" onclick="buih2('komuniti')" style="cursor:pointer"/>
+          <text x="580" y="70" text-anchor="middle" fill="#4C1D95" font-family="Nunito,sans-serif" font-size="12" font-weight="700" onclick="buih2('komuniti')" style="cursor:pointer">🤝 Libat</text>
+          <text x="580" y="84" text-anchor="middle" fill="#4C1D95" font-family="Nunito,sans-serif" font-size="12" font-weight="700" onclick="buih2('komuniti')" style="cursor:pointer">Komuniti</text>
+          <circle cx="60" cy="150" r="42" fill="#DBEAFE" stroke="#1D4ED8" stroke-width="2.5" onclick="buih2('saintifik')" style="cursor:pointer"/>
+          <text x="60" y="145" text-anchor="middle" fill="#1E3A8A" font-family="Nunito,sans-serif" font-size="12" font-weight="700" onclick="buih2('saintifik')" style="cursor:pointer">🔬 Berasas</text>
+          <text x="60" y="159" text-anchor="middle" fill="#1E3A8A" font-family="Nunito,sans-serif" font-size="12" font-weight="700" onclick="buih2('saintifik')" style="cursor:pointer">Sains</text>
+          <circle cx="640" cy="150" r="42" fill="#FEF3C7" stroke="#D97706" stroke-width="2.5" onclick="buih2('dasar')" style="cursor:pointer"/>
+          <text x="640" y="145" text-anchor="middle" fill="#92400E" font-family="Nunito,sans-serif" font-size="12" font-weight="700" onclick="buih2('dasar')" style="cursor:pointer">🏛️ Sokongan</text>
+          <text x="640" y="159" text-anchor="middle" fill="#92400E" font-family="Nunito,sans-serif" font-size="12" font-weight="700" onclick="buih2('dasar')" style="cursor:pointer">Kerajaan</text>
+          <circle cx="120" cy="225" r="42" fill="#FCE7F3" stroke="#BE185D" stroke-width="2.5" onclick="buih2('mudah')" style="cursor:pointer"/>
+          <text x="120" y="220" text-anchor="middle" fill="#9D174D" font-family="Nunito,sans-serif" font-size="12" font-weight="700" onclick="buih2('mudah')" style="cursor:pointer">😊 Mudah</text>
+          <text x="120" y="234" text-anchor="middle" fill="#9D174D" font-family="Nunito,sans-serif" font-size="12" font-weight="700" onclick="buih2('mudah')" style="cursor:pointer">Dilaksana</text>
+          <circle cx="580" cy="225" r="42" fill="#FEE2E2" stroke="#DC2626" stroke-width="2.5" onclick="buih2('berterusan')" style="cursor:pointer"/>
+          <text x="580" y="220" text-anchor="middle" fill="#991B1B" font-family="Nunito,sans-serif" font-size="12" font-weight="700" onclick="buih2('berterusan')" style="cursor:pointer">♾️ Perlu</text>
+          <text x="580" y="234" text-anchor="middle" fill="#991B1B" font-family="Nunito,sans-serif" font-size="12" font-weight="700" onclick="buih2('berterusan')" style="cursor:pointer">Berterusan</text>
+          <text x="350" y="288" text-anchor="middle" fill="#9CA3AF" font-family="Nunito,sans-serif" font-size="13">👆 Klik buih untuk baca penerangan</text>
+        </svg>
+      </div>
+      <div id="bi2" class="buih-info" style="border-color:var(--g1);background:var(--g3)"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SLIDE 8: KUIZ ══ -->
+<div class="slide slide-quiz" data-idx="8">
+  <div class="slide-inner">
+    <div class="slide-title" style="color:var(--p1)">🎮 Kuiz Pencemaran Udara</div>
+    <div class="slide-sub">Jawab 10 soalan dan lihat markah kamu! 🌟</div>
+
+    <div class="quiz-wrap">
+      <div id="quizMain">
+        <div class="qstat-row">
+          <span class="qstat" id="qNum">Soalan 1 / 10</span>
+          <span class="qstat" style="color:var(--p1);font-size:18px" id="qScore">⭐ Markah: 0</span>
+        </div>
+        <div class="quiz-prog"><div class="quiz-prog-fill" id="qProg" style="width:10%"></div></div>
+        <div class="quiz-q" id="qQ"></div>
+        <div class="quiz-opts" id="qOpts"></div>
+        <div class="q-fb" id="qFb"></div>
+        <button class="q-next" id="qNext" onclick="nextQ()">Soalan seterusnya →</button>
+      </div>
+      <div class="quiz-score" id="quizEnd">
+        <div style="font-size:26px;font-weight:800;margin-bottom:8px">🎉 Tahniah! Kamu Hebat!</div>
+        <div class="score-num" id="sFinal">0/10</div>
+        <div class="score-stars" id="sStars"></div>
+        <div class="score-msg" id="sMsg"></div>
+        <button class="q-restart" onclick="restartQuiz()">🔄 Cuba Lagi!</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- end .slides -->
+
+<!-- ═══════════ BOTTOMBAR ═══════════ -->
+<div class="bottombar">
+  <button class="nav-arrow btn-prev" onclick="prevSlide()">◀</button>
+  <div class="slide-dots" id="dots"></div>
+  <span class="slide-counter" id="counter">1 / 9</span>
+  <button class="nav-arrow btn-next" onclick="nextSlide()">▶</button>
+</div>
+
+<script>
+// ═══ SLIDE ENGINE ═══
+const TOTAL = 9;
+let cur = 0;
+const slides = document.querySelectorAll('.slide');
+const tabs = document.querySelectorAll('.tab-btn');
+const dotsEl = document.getElementById('dots');
+
+// Build dots
+for(let i=0;i<TOTAL;i++){
+  const d=document.createElement('div');
+  d.className='dot'+(i===0?' on':'');
+  d.onclick=()=>goTo(i);
+  dotsEl.appendChild(d);
+}
+
+function goTo(idx, btn){
+  if(idx===cur) return;
+  slides[cur].classList.remove('active');
+  slides[cur].classList.add('out-left');
+  setTimeout(()=>slides[cur<idx?cur:idx+1 < TOTAL ? idx : cur].classList.remove('out-left'), 400);
+  slides[cur].classList.remove('out-left');
+  cur=idx;
+  slides.forEach((s,i)=>{
+    s.classList.toggle('active',i===idx);
+    s.classList.remove('out-left');
+  });
+  dotsEl.querySelectorAll('.div,.dot').forEach((d,i)=>{
+    if(d.classList)d.classList.toggle('on',i===idx);
+  });
+  dotsEl.children[idx].classList.add('on');
+  Array.from(dotsEl.children).forEach((d,i)=>d.classList.toggle('on',i===idx));
+  document.getElementById('counter').textContent=(idx+1)+' / '+TOTAL;
+  tabs.forEach((t,i)=>t.classList.toggle('on',i===idx));
+  // scroll slide to top
+  slides[idx].scrollTop=0;
+  if(idx===8 && !quizStarted) startQuiz();
+}
+function nextSlide(){if(cur<TOTAL-1)goTo(cur+1)}
+function prevSlide(){if(cur>0)goTo(cur-1)}
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key==='ArrowDown') nextSlide();
+  if(e.key==='ArrowLeft'||e.key==='ArrowUp') prevSlide();
+});
+
+// ═══ FLIP CARDS ═══
+// handled via onclick toggle
+
+// ═══ REVEAL ACCORDION ═══
+function toggleReveal(btn){
+  const content=btn.nextElementSibling;
+  const isOpen=btn.classList.contains('open-btn');
+  document.querySelectorAll('.reveal-btn').forEach(b=>b.classList.remove('open-btn'));
+  document.querySelectorAll('.reveal-content').forEach(c=>c.classList.remove('open'));
+  if(!isOpen){btn.classList.add('open-btn');content.classList.add('open');}
+}
+
+// ═══ MIND MAP ═══
+function mmDetail(id){
+  ['mm-faktor','mm-kesan','mm-penyelesaian','mm-pm10'].forEach(d=>{
+    const el=document.getElementById(d);
+    if(el) el.style.display=(d==='mm-'+id && el.style.display==='none')?'block':'none';
+  });
+}
+
+// ═══ CORNELL HIGHLIGHT ═══
+const hlMap={
+  pm10:'hl-pm10', faktor:'hl-faktor', kesan:'hl-kesan',
+  jerebu:'hl-jerebu', bandar:'hl-bandar', penyelesaian:'hl-penyelesaian',
+  penghijauan:'hl-penghijauan', ipu:'hl-ipu'
+};
+let lastHl=null;
+function hlWord(key){
+  if(lastHl){
+    const el=document.getElementById(lastHl);
+    if(el){el.style.background='';el.style.borderRadius='';}
+  }
+  const id=hlMap[key];
+  const el=document.getElementById(id);
+  if(el){
+    el.style.background='#FDE047';
+    el.style.borderRadius='5px';
+    el.scrollIntoView({behavior:'smooth',block:'nearest'});
+    lastHl=id;
+  }
+}
+
+// ═══ SIX HATS ═══
+const hatData={
+  white:{bg:'#F8FAFC',bc:'#94A3B8',tc:'#1E293B',
+    title:'⚪ Topi Putih — Fakta & Data',
+    points:[
+      ['📊','PM10 bandar 3x lebih tinggi daripada luar bandar','(Hamid @ Hussain, 2021)'],
+      ['🏫','7,645 sekolah ditutup semasa jerebu 2015 — 4,080,971 pelajar terjejas','(Hamid @ Hussain, 2021)'],
+      ['🌍','Malaysia ke-50 dunia dalam pencemaran PM2.5 (19.36 µg/m³) pada 2019','(Puteh et al., 2024)'],
+      ['🔬','66 punca pencemaran udara dalaman sekolah dikenal pasti oleh WHO',''],
+      ['📋','Pembakaran terbuka = punca utama, dipersetujui majoriti 207 responden','(Puteh et al., 2024)'],
+    ]},
+  yellow:{bg:'#FEFCE8',bc:'#D97706',tc:'#78350F',
+    title:'🟡 Topi Kuning — Pandangan Positif',
+    points:[
+      ['🌳','Program Penghijauan Sekolah terbukti berkesan meningkatkan kualiti udara','(Dato1 & Mahat, 2026)'],
+      ['💡','Teknologi penapis udara semakin murah dan mudah diperoleh',''],
+      ['👨‍👩‍👧','Kesedaran masyarakat Malaysia tentang pencemaran semakin meningkat','(Puteh et al., 2024)'],
+      ['✅','Undang-undang alam sekitar Malaysia boleh dikuatkuasakan dengan lebih tegas',''],
+      ['🌟','Penglibatan pelajar dalam isu alam sekitar membentuk generasi yang lebih prihatin','(Dato1 & Mahat, 2026)'],
+    ]},
+  red:{bg:'#FFF1F2',bc:'#DC2626',tc:'#7F1D1D',
+    title:'🔴 Topi Merah — Emosi & Perasaan',
+    points:[
+      ['😰','Saya bimbang apabila terhidu asap di kawasan sekolah',''],
+      ['😢','Sedih melihat rakan-rakan terpaksa pakai pelitup muka kerana jerebu',''],
+      ['😡','Marah kepada mereka yang membakar sampah berhampiran kawasan sekolah',''],
+      ['😨','Takut apabila IPU mencecah paras berbahaya dan sekolah mungkin ditutup',''],
+      ['💪','Rasa bertanggungjawab untuk jaga alam sekitar sekolah kita bersama-sama!',''],
+    ]},
+  green:{bg:'#F0FDF4',bc:'#059669',tc:'#064E3B',
+    title:'🟢 Topi Hijau — Kreativiti & Idea Baharu',
+    points:[
+      ['🤖','Reka robot mini yang boleh ukur kualiti udara di setiap bilik darjah',''],
+      ['🌺','Buat taman pokok penapis udara (air-purifying plants) di sekeliling sekolah','(Dato1 & Mahat, 2026)'],
+      ['📱','Cipta aplikasi pantau IPU sekolah secara langsung untuk semua murid',''],
+      ['🎨','Lukis mural dinding tentang kepentingan udara bersih — ilham semua warga sekolah',''],
+      ['♟','Adakan pertandingan idea mengurangkan pencemaran udara antara kelas!',''],
+    ]},
+  blue:{bg:'#EFF6FF',bc:'#1D4ED8',tc:'#1E3A8A',
+    title:'🔵 Topi Biru — Proses & Rancangan',
+    points:[
+      ['📋','Langkah 1: Ukur kualiti udara di setiap kawasan sekolah setiap bulan','(Hamid @ Hussain, 2021)'],
+      ['📋','Langkah 2: Kenal pasti punca pencemaran utama di sekolah kita sendiri',''],
+      ['📋','Langkah 3: Rancang program Penghijauan Sekolah bersama guru dan pelajar','(Dato1 & Mahat, 2026)'],
+      ['📋','Langkah 4: Laksanakan kempen kesedaran dan libatkan ibu bapa','(Puteh et al., 2024)'],
+      ['📋','Langkah 5: Nilai keberkesanan langkah yang diambil setiap penggal',''],
+    ]},
+  black:{bg:'#1F2937',bc:'#4B5563',tc:'#F9FAFB',
+    title:'⚫ Topi Hitam — Risiko & Masalah',
+    points:[
+      ['⚠️','Kesan jangka panjang PM10 boleh menyebabkan kecacatan fungsi paru-paru kekal','(Hamid @ Hussain, 2021)'],
+      ['⚠️','Kos pemasangan sistem penuras udara di semua sekolah sangat tinggi',''],
+      ['⚠️','Pelajar menghidap asma berisiko tinggi semasa episod jerebu',''],
+      ['⚠️','Pencemaran merentas sempadan — asap dari negara jiran sukar dikawal','(Puteh et al., 2024)'],
+      ['⚠️','Perubahan iklim global akan memburukkan lagi masalah jerebu pada masa depan',''],
+    ]},
+};
+function pickHat(type,el){
+  document.querySelectorAll('.hat').forEach(h=>h.classList.remove('picked'));
+  el.classList.add('picked');
+  const d=hatData[type];
+  const area=document.getElementById('hat-area');
+  area.innerHTML=`<div style="background:${d.bg};border:3px solid ${d.bc};border-radius:16px;padding:18px 20px;animation:fadeSlide .3s ease">
+    <strong style="color:${d.tc};font-size:20px">${d.title}</strong>
+    <div style="margin-top:12px">
+    ${d.points.map(([e,t,c])=>`<div class="hat-point">
+      <span style="font-size:22px;flex-shrink:0">${e}</span>
+      <span style="font-size:19px;line-height:1.6;color:${d.tc}">${t} <em style="font-size:15px;opacity:.65">${c}</em></span>
+    </div>`).join('')}
+    </div>
+  </div>`;
+}
+
+// ═══ PETA BUIH ═══
+const bi1data={
+  berbahaya:{t:'☠️ Sangat Berbahaya',c:'Pencemaran udara menyebabkan 15% kematian global (2017) dan 275 juta orang kurang upaya (2019). Bahan pencemar seperti CO dan PM10 merosakkan paru-paru secara perlahan!',ref:'(Puteh et al., 2024)'},
+  invisible:{t:'👻 Tidak Kelihatan',c:'Kebanyakan bahan pencemar seperti karbon monoksida (CO), sulfur dioksida (SO₂), dan nitrogen oksida tidak dapat dilihat mata kasar — inilah yang menjadikannya sangat berbahaya!',ref:'(Puteh et al., 2024)'},
+  merebak:{t:'💨 Merebak Jauh',c:'Asap dan partikel tercemar boleh merebak ratusan kilometer. Jerebu Malaysia 2015 berpunca dari pembakaran ladang di negara jiran yang menjejaskan seluruh Semenanjung!',ref:'(Hamid @ Hussain, 2021)'},
+  global:{t:'🌍 Masalah Global',c:'Malaysia berada di kedudukan ke-50 dunia dalam pencemaran PM2.5. Masalah ini bukan hanya di Malaysia — ia melanda seluruh rantau Asia Tenggara.',ref:'(Puteh et al., 2024)'},
+  bolehkawal:{t:'✅ Boleh Dikawal',c:'Walaupun serius, pencemaran udara BOLEH dikurangkan! Penghijauan Sekolah, kawalan pembakaran terbuka, penggunaan tenaga bersih, dan kesedaran komuniti sudah terbukti berkesan.',ref:'(Dato1 & Mahat, 2026)'},
+  berlapis:{t:'📊 Pelbagai Punca',c:'Terdapat 66 punca pencemaran udara dalaman sekolah yang dikenal pasti WHO — dari kulat toksik, cat, mesin fotostat, hingga asap dari luar bangunan. Pencemaran datang dari banyak arah sekaligus!',ref:'(Hamid @ Hussain, 2021)'},
+};
+const bi2data={
+  lestari:{t:'🌿 Lestari & Hijau',c:'Penyelesaian pencemaran udara mesti bersifat lestari — memenuhi keperluan hari ini tanpa merosakkan keperluan generasi akan datang. Program Penghijauan Sekolah adalah contoh terbaik!',ref:'(Dato1 & Mahat, 2026)'},
+  komuniti:{t:'🤝 Libatkan Komuniti',c:'Mengatasi pencemaran udara memerlukan kerjasama semua pihak — pelajar, guru, ibu bapa, komuniti, dan kerajaan. Program yang melibatkan komuniti terbukti lebih berkesan dan berkekalan.',ref:'(Puteh et al., 2024)'},
+  saintifik:{t:'🔬 Berasas Sains',c:'Penyelesaian mesti berdasarkan bukti saintifik! Penggunaan alat ukur PM10 dan PM2.5, pemantauan IPU, dan kajian kesan kesihatan membantu kita tentukan langkah yang paling berkesan.',ref:'(Hamid @ Hussain, 2021)'},
+  dasar:{t:'🏛️ Sokongan Kerajaan',c:'Kawalan pencemaran udara memerlukan dasar kerajaan yang kukuh. Jabatan Alam Sekitar (JAS) bertanggungjawab memantau dan menguatkuasakan kualiti udara di Malaysia di bawah Akta Kualiti Alam Sekeliling 1974.',ref:''},
+  mudah:{t:'😊 Mudah Dilaksanakan',c:'Banyak cara mengatasi pencemaran yang mudah dilakukan oleh pelajar — tanam pokok, guna pengangkutan awam, kurangkan pembakaran sampah, dan sebarkan kesedaran kepada keluarga!',ref:'(Dato1 & Mahat, 2026)'},
+  berterusan:{t:'♾️ Perlu Berterusan',c:'Usaha mengatasi pencemaran bukan projek sekali sahaja. Ia memerlukan komitmen jangka panjang — dari penanaman pokok, pemantauan harian, hingga pendidikan alam sekitar yang berterusan di sekolah.',ref:''},
+};
+function buih1(key){
+  const d=bi1data[key];
+  const el=document.getElementById('bi1');
+  el.className='buih-info show';
+  el.style.borderColor='var(--p1)';el.style.background='var(--p3)';
+  el.innerHTML=`<strong style="color:var(--p1)">${d.t}</strong><br><span style="font-size:19px">${d.c}</span> <em style="font-size:15px;color:var(--p2)">${d.ref}</em>`;
+}
+function buih2(key){
+  const d=bi2data[key];
+  const el=document.getElementById('bi2');
+  el.className='buih-info show';
+  el.style.borderColor='var(--g1)';el.style.background='var(--g3)';
+  el.innerHTML=`<strong style="color:var(--g1)">${d.t}</strong><br><span style="font-size:19px">${d.c}</span> <em style="font-size:15px;color:var(--g1)">${d.ref}</em>`;
+}
+
+// ═══ QUIZ ═══
+const Qs=[
+  {q:'🌬️ Apakah maksud PM10?',
+   opts:['Partikel bersaiz 10 meter besar','Partikel ternafas ≤10 mikrometer yang masuk ke paru-paru','Polusi Merah Peringkat 10','Program Memantau 10 Kawasan'],
+   ans:1,
+   exp:'PM10 = Partikel Ternafas bersaiz 10 mikrometer atau kurang. Ia sangat halus sehingga boleh masuk terus ke dalam paru-paru! (Hamid @ Hussain, 2021)'},
+  {q:'🔥 Apakah punca UTAMA pencemaran udara di Malaysia?',
+   opts:['Pelepasan industri','Pengangkutan kenderaan','Pembakaran terbuka','Asap rokok'],
+   ans:2,
+   exp:'Majoriti daripada 207 responden dalam kajian bersetuju bahawa pembakaran terbuka merupakan punca utama pencemaran udara di Malaysia. (Puteh et al., 2024)'},
+  {q:'🏫 Semasa jerebu 2015, berapa buah sekolah terpaksa ditutup?',
+   opts:['1,000 sekolah','3,500 sekolah','5,200 sekolah','7,645 sekolah'],
+   ans:3,
+   exp:'Sebanyak 7,645 buah sekolah ditutup melibatkan 4,080,971 pelajar semasa IPU mencecah "sangat tidak sihat" (>200 μg/m³). (Hamid @ Hussain, 2021)'},
+  {q:'📊 Kepekatan PM10 bandar berbanding luar bandar adalah...',
+   opts:['Sama sahaja','2 kali lebih tinggi','3 kali lebih tinggi','10 kali lebih tinggi'],
+   ans:2,
+   exp:'Kajian mendapati kepekatan PM10 di kawasan bandar adalah 3 kali lebih tinggi daripada kawasan luar bandar. (Hamid @ Hussain, 2021)'},
+  {q:'🌳 Program apakah yang dicadangkan untuk tingkatkan kualiti udara sekolah?',
+   opts:['Program Membersih Sekolah','Penghijauan Sekolah','Program Kitar Semula Kertas','Projek Solar Sekolah'],
+   ans:1,
+   exp:'Dato1 & Mahat (2026) mencadangkan Penghijauan Sekolah — menanam pokok dan membuat taman hijau — untuk meningkatkan kualiti udara dan pembangunan lestari.'},
+  {q:'🌾 Apakah gas berbahaya yang dihasilkan oleh aktiviti pertanian?',
+   opts:['Oksigen (O₂)','Nitrogen tulen (N₂)','Ammonia (NH₃)','Air (H₂O)'],
+   ans:2,
+   exp:'Penggunaan baja dan racun serangga dalam pertanian menghasilkan ammonia — salah satu gas paling berbahaya di atmosfera. (Puteh et al., 2024)'},
+  {q:'😮‍💨 Antara berikut, yang BUKAN simptom pencemaran udara ialah...',
+   opts:['Batuk dan bersin','Alahan mata dan hidung','Demam campak','Sesak nafas'],
+   ans:2,
+   exp:'Demam campak disebabkan virus, BUKAN pencemaran udara. Simptom pencemaran termasuk batuk, bersin, alahan mata/hidung, sesak nafas, dan pening. (Hamid @ Hussain, 2021)'},
+  {q:'🌍 Malaysia berada di tangga berapakah dunia dalam pencemaran PM2.5 pada 2019?',
+   opts:['Ke-10','Ke-25','Ke-50','Ke-100'],
+   ans:2,
+   exp:'Malaysia berada di kedudukan ke-50 dunia pada 2019 dengan PM2.5 = 19.36 µg/m³, dalam julat "sederhana tercemar". (Puteh et al., 2024)'},
+  {q:'🚗 Gas apakah yang utamanya dikeluarkan oleh kenderaan bermotor?',
+   opts:['Sulfur dioksida (SO₂)','Ammonia (NH₃)','Karbon monoksida (CO)','Helium (He)'],
+   ans:2,
+   exp:'Kenderaan bermotor mengeluarkan karbon monoksida (CO) melalui pembakaran bahan api tidak lengkap — salah satu bahan pencemar udara paling berbahaya. (Puteh et al., 2024)'},
+  {q:'💡 Manakah BUKAN cara mengatasi pencemaran udara?',
+   opts:['Tanam lebih banyak pokok di sekolah','Bakar sampah setiap hari','Guna pengangkutan awam','Pakai pelitup muka semasa IPU tinggi'],
+   ans:1,
+   exp:'Membakar sampah setiap hari adalah PUNCA pencemaran, bukan penyelesaian! Cara betul termasuk penghijauan, pengangkutan awam, dan pelitup muka. (Puteh et al., 2024)'},
+];
+
+let qIdx=0,qScore=0,qAnswered=false,quizStarted=false;
+function startQuiz(){
+  quizStarted=true;qIdx=0;qScore=0;
+  document.getElementById('quizMain').style.display='block';
+  document.getElementById('quizEnd').style.display='none';
+  loadQ();
+}
+function loadQ(){
+  qAnswered=false;
+  const q=Qs[qIdx];
+  document.getElementById('qNum').textContent='Soalan '+(qIdx+1)+' / '+Qs.length;
+  document.getElementById('qScore').textContent='⭐ Markah: '+qScore;
+  document.getElementById('qProg').style.width=Math.round((qIdx/Qs.length)*100)+'%';
+  document.getElementById('qQ').textContent=q.q;
+  const labels=['A','B','C','D'];
+  document.getElementById('qOpts').innerHTML=q.opts.map((o,i)=>`
+    <button class="qopt" onclick="answerQ(${i})">
+      <span class="q-label">${labels[i]}</span>${o}
+    </button>`).join('');
+  const fb=document.getElementById('qFb');
+  fb.className='q-fb';fb.textContent='';
+  document.getElementById('qNext').style.display='none';
+}
+function answerQ(chosen){
+  if(qAnswered)return;qAnswered=true;
+  const q=Qs[qIdx];
+  document.querySelectorAll('.qopt').forEach((b,i)=>{
+    b.disabled=true;
+    if(i===q.ans)b.classList.add('correct');
+    else if(i===chosen)b.classList.add('wrong');
+  });
+  const fb=document.getElementById('qFb');
+  const ok=chosen===q.ans;
+  if(ok)qScore++;
+  fb.className='q-fb show '+(ok?'ok':'no');
+  fb.innerHTML=(ok?'🎉 Betul! ':'❌ Salah. ')+q.exp;
+  document.getElementById('qScore').textContent='⭐ Markah: '+qScore;
+  const nBtn=document.getElementById('qNext');
+  nBtn.style.display='block';
+  nBtn.textContent=qIdx<Qs.length-1?'Soalan seterusnya →':'Lihat keputusan 🎉';
+}
+function nextQ(){
+  qIdx++;
+  if(qIdx>=Qs.length)showScore();
+  else loadQ();
+}
+function showScore(){
+  document.getElementById('quizMain').style.display='none';
+  document.getElementById('quizEnd').style.display='block';
+  const pct=qScore/Qs.length;
+  document.getElementById('sFinal').textContent=qScore+'/'+Qs.length;
+  let stars='⭐',msg='';
+  if(pct>=.9){stars='⭐⭐⭐⭐⭐';msg='🏆 Luar biasa! Kamu Pakar Pencemaran Udara!';}
+  else if(pct>=.7){stars='⭐⭐⭐⭐';msg='🌟 Sangat Bagus! Teruskan usaha!';}
+  else if(pct>=.5){stars='⭐⭐⭐';msg='😊 Bagus! Ulang kaji lagi ya!';}
+  else if(pct>=.3){stars='⭐⭐';msg='💪 Teruskan belajar! Kamu boleh buat lebih baik!';}
+  else{stars='⭐';msg='📚 Baca semula nota dan cuba lagi!';}
+  document.getElementById('sStars').textContent=stars;
+  document.getElementById('sMsg').textContent=msg;
+  document.getElementById('qProg').style.width='100%';
+}
+function restartQuiz(){startQuiz()}
+
+// Init
+goTo(0);
+</script>
+</body>
+</html>
